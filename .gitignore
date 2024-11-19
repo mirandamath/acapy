@@ -194,3 +194,5 @@ open-api/.build
 
 # devcontainer
 .pytest.ini
+
+node_modules/
