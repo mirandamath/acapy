@@ -34,14 +34,14 @@ function ResidentDashboard({ apiUrl }) {
       <AcceptInvitation apiUrl={apiUrl} />
       <PendingConnections apiUrl={apiUrl} />
       <ConnectionsList apiUrl={apiUrl} />
-      {/* <ViewProofRequests apiUrl={apiUrl} onSelectProofRequest={handleSelectProofRequest} /> */}
-      {/* {selectedProofRequest && (
+      <ViewProofRequests apiUrl={apiUrl} onSelectProofRequest={handleSelectProofRequest} />
+      {selectedProofRequest && (
         <RespondProofRequest
           apiUrl={apiUrl}
           selectedProofRequest={selectedProofRequest}
           onResponseSent={handleResponseSent}
         />
-      )} */}
+      )}
       {/* <PendingStoreProofs apiUrl={apiUrl} /> */}
       <PendingCredentialOffers apiUrl={apiUrl} />
       <PendingStoreCredentials apiUrl={apiUrl} />

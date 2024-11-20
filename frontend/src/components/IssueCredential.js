@@ -93,7 +93,7 @@ function IssueCredential({ apiUrl }) {
           '@type': 'https://didcomm.org/issue-credential/2.0/credential-preview',
           attributes: attributes,
         },
-        auto_issue: true,
+        // auto_issue: true,
         auto_remove: true,
       });
 

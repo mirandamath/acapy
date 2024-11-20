@@ -7,6 +7,7 @@ import RequestProof from "./components/RequestProof";
 import PendingConnections from "./components/PendingConnections";
 import PendingCredentialRequests from "./components/PendingCredentialRequests";
 import ConnectionsList from "./components/ConnectionsList";
+import ValidateProof from "./components/ValidateProof";
 
 function DashboardCondominio({ apiUrl }) {
   // console.log(apiUrl)
@@ -25,7 +26,8 @@ function DashboardCondominio({ apiUrl }) {
       <CreateSchema apiUrl={apiUrl} />
       <IssueCredential apiUrl={apiUrl} />
       <PendingCredentialRequests apiUrl={apiUrl} />
-      {/* <RequestProof apiUrl={apiUrl} /> */}
+      <RequestProof apiUrl={apiUrl} />
+      <ValidateProof apiUrl={apiUrl} />
     </div>
   );
 }

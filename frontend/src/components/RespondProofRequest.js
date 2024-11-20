@@ -1,159 +1,98 @@
 // src/components/RespondProofRequest.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
 
-function RespondProofRequest({ apiUrl, selectedProofRequest, onResponseSent }) {
+function RespondProofRequest({ selectedProofRequest, apiUrl }) {
   const [credentials, setCredentials] = useState([]);
   const [selectedCreds, setSelectedCreds] = useState([]);
-
   useEffect(() => {
-    if (selectedProofRequest) {
-      console.log('RespondProofRequest - selectedProofRequest:', selectedProofRequest);
-      fetchCredentials();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedProofRequest]);
+    // Obter a cred_def_id exigida na solicitação de prova
+    const requestedAttributes = selectedProofRequest.by_format?.pres_request?.indy?.requested_attributes || {};
+    const credDefIds = new Set();
 
-  const fetchCredentials = () => {
-    const presExId = selectedProofRequest.pres_ex_id;
-    if (!presExId) {
-      console.error('presentation_exchange_id ou pres_ex_id está indefinido');
-      setCredentials([]); // Garante que credentials é um array vazio
-      return;
-    }
+    Object.values(requestedAttributes).forEach((attr) => {
+      if (attr.restrictions) {
+        attr.restrictions.forEach((restriction) => {
+          if (restriction.cred_def_id) {
+            credDefIds.add(restriction.cred_def_id);
+          }
+        });
+      }
+    });
 
+    // Buscar as credenciais disponíveis
     axios
-      .get(`${apiUrl}/present-proof-2.0/records/${presExId}/credentials`)
+      .get(`${apiUrl}/present-proof-2.0/records/${selectedProofRequest.pres_ex_id}/credentials`)
       .then((response) => {
-        console.log('Credenciais Recebidas:', response.data);
-        setCredentials(response.data || []);
+        // Filtrar as credenciais que correspondem à cred_def_id exigida
+        const matchingCredentials = response.data.filter((cred) => 
+            credDefIds.has(cred.cred_info.cred_def_id)
+        );
+        setCredentials(matchingCredentials);
       })
       .catch((error) => {
         console.error('Erro ao buscar credenciais:', error);
-        setCredentials([]); // Define como array vazio em caso de erro
       });
-  };
+  }, [selectedProofRequest, apiUrl]);
 
-  const handleCredentialSelection = (credId) => {
-    console.log('Selecionando Credencial:', credId);
-    setSelectedCreds((prev) =>
-      prev.includes(credId) ? prev.filter((id) => id !== credId) : [...prev, credId]
-    );
-  };
-
-  const sendPresentation = async () => {
-    if (selectedCreds.length === 0) {
-      alert('Por favor, selecione pelo menos uma credencial para enviar a apresentação.');
-      return;
+  const handleCredentialSelection = (referent) => {
+    if (selectedCreds.includes(referent)) {
+      setSelectedCreds(selectedCreds.filter((r) => r !== referent));
+    } else {
+      setSelectedCreds([...selectedCreds, referent]);
     }
+  };
 
-    try {
-      console.log('Enviando Apresentação:', selectedCreds);
-      // Preparar os atributos e predicados para a apresentação
-      const requestedAttributes = {};
-      const requestedPredicates = {};
+  const sendPresentation = () => {
+    // Construir a apresentação com as credenciais selecionadas
+    const requestedCredentials = {
+      self_attested_attributes: {},
+      requested_attributes: {},
+      requested_predicates: {},
+    };
 
-      const indyRequest = selectedProofRequest.by_format.pres_request.indy;
+    const requestedAttrs = selectedProofRequest.by_format?.pres_request?.indy?.requested_attributes || {};
 
-      Object.entries(indyRequest.requested_attributes).forEach(([referent, attr]) => {
-        if (attr.restrictions) {
-          // Seleciona a primeira credencial que corresponde às restrições
-          const credId = selectedCreds[0];
-          requestedAttributes[referent] = {
-            cred_id: credId,
-            revealed: true,
-          };
-        }
-      });
-
-      Object.entries(indyRequest.requested_predicates).forEach(([referent, predicate]) => {
-        if (predicate.restrictions) {
-          const credId = selectedCreds[0];
-          requestedPredicates[referent] = {
-            cred_id: credId,
-          };
-        }
-      });
-
-      const presExId = selectedProofRequest.pres_ex_id;
-      if (!presExId) {
-        alert('ID da Solicitação de Prova está indefinido.');
-        return;
-      }
-
-      // Cria os dados da apresentação
-      const presentationData = {
-        self_attested_attributes: {},
-        requested_attributes: requestedAttributes,
-        requested_predicates: requestedPredicates,
-      };
-
-      // Converte os dados da apresentação para JSON e codifica em base64
-      const presentationBase64 = btoa(JSON.stringify(presentationData));
-
-      // Gera um ID único para a apresentação
-      const presentationId = uuidv4();
-
-      // Constrói o objeto de apresentação conforme esperado pela API do ACA-Py
-      const presentation = {
-        '@type': 'https://didcomm.org/present-proof/2.0/presentation',
-        '@id': presentationId,
-        'formats': [
-          {
-            'attach_id': 'indy',
-            'format': 'hlindy/presentation@v2.0'
-          }
-        ],
-        'presentations~attach': [
-          {
-            '@id': 'indy',
-            'mime-type': 'application/json',
-            'data': {
-              'base64': presentationBase64
-            }
-          }
-        ]
-      };
-
-      const payload = {
-        presentation_request_ref: presExId,
-        presentation: presentation,
-      };
-
-      console.log('Payload Enviado:', payload);
-
-      const response = await axios.post(
-        `${apiUrl}/present-proof-2.0/records/${presExId}/send-presentation`,
-        payload
+    Object.keys(requestedAttrs).forEach((attrReferent) => {
+      const attr = requestedAttrs[attrReferent];
+      // Encontrar uma credencial que possua o atributo solicitado
+      const matchingCred = credentials.find((cred) =>
+        cred.cred_info.attrs.hasOwnProperty(attr.name)
       );
 
-      if (response.status === 200) {
-        alert('Apresentação enviada com sucesso!');
-        onResponseSent();
-      } else {
-        alert('Falha ao enviar a apresentação.');
+      if (matchingCred && selectedCreds.includes(matchingCred.cred_info.referent)) {
+        requestedCredentials.requested_attributes[attrReferent] = {
+          cred_id: matchingCred.cred_info.referent,
+          revealed: true,
+        };
       }
+    });
 
-      console.log('Resposta da apresentação:', response.data);
-    } catch (error) {
-      console.error('Erro ao enviar apresentação:', error);
-      alert(`Erro ao enviar apresentação: ${error.response?.data?.detail || error.message}`);
-    }
+    axios
+      .post(
+        `${apiUrl}/present-proof-2.0/records/${selectedProofRequest.pres_ex_id}/send-presentation`,
+        {
+          indy: requestedCredentials,
+        }
+      )
+      .then((response) => {
+        alert('Apresentação enviada com sucesso!');
+      })
+      .catch((error) => {
+        console.error('Erro ao enviar apresentação:', error);
+        alert('Erro ao enviar apresentação.');
+      });
   };
-
-  if (!selectedProofRequest) {
-    return null;
-  }
 
   return (
     <div>
       <h2>Responder Solicitação de Prova</h2>
       <p>
-        <strong>ID da Solicitação:</strong> {selectedProofRequest.pres_ex_id || selectedProofRequest.presentation_exchange_id}
+        <strong>ID da Solicitação:</strong> {selectedProofRequest.pres_ex_id}
       </p>
       <p>
-        <strong>Nome da Solicitação:</strong> {selectedProofRequest.by_format?.pres_request?.indy?.name || 'N/A'}
+        <strong>Nome da Solicitação:</strong>{' '}
+        {selectedProofRequest.by_format?.pres_request?.indy?.name || 'N/A'}
       </p>
       <h3>Selecione as Credenciais para Enviar:</h3>
       {credentials.length > 0 ? (
@@ -166,7 +105,12 @@ function RespondProofRequest({ apiUrl, selectedProofRequest, onResponseSent }) {
                   checked={selectedCreds.includes(cred.cred_info.referent)}
                   onChange={() => handleCredentialSelection(cred.cred_info.referent)}
                 />
-                {cred.cred_info.attrs.name || 'Nome Indefinido'} - Apartment: {cred.cred_info.attrs.apartment_number || 'Número Indefinido'}
+                <strong>Credencial ID:</strong> {cred.cred_info.referent}
+                {Object.entries(cred.cred_info.attrs).map(([key, value]) => (
+                  <p key={key}>
+                    <strong>{key}:</strong> {value}
+                  </p>
+                ))}
               </label>
             </li>
           ))}

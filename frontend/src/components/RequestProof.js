@@ -1,24 +1,17 @@
 // src/components/RequestProof.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { getIssuerDID } from '../utils/getIssuerDID';
 
 function RequestProof({ apiUrl }) {
   const [connections, setConnections] = useState([]);
+  const [credDefs, setCredDefs] = useState([]);
+  const [schemas, setSchemas] = useState({});
   const [selectedConnectionId, setSelectedConnectionId] = useState('');
-  const [issuerDID, setIssuerDID] = useState('');
+  const [selectedCredDefId, setSelectedCredDefId] = useState('');
+  const [attributes, setAttributes] = useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState({});
 
   useEffect(() => {
-    // Obter o issuer DID dinamicamente
-    getIssuerDID(apiUrl)
-      .then((did) => {
-        setIssuerDID(did);
-        console.log('Issuer DID:', did); // Log para verificar
-      })
-      .catch((error) => {
-        alert('Erro ao obter o Issuer DID. Verifique os logs.');
-      });
-
     // Buscar conexões ativas
     axios
       .get(`${apiUrl}/connections`)
@@ -31,7 +24,64 @@ function RequestProof({ apiUrl }) {
       .catch((error) => {
         console.error('Erro ao buscar conexões:', error);
       });
+
+    // Buscar definições de credenciais criadas
+    axios
+      .get(`${apiUrl}/credential-definitions/created`)
+      .then((response) => {
+        const credDefIds = response.data.credential_definition_ids;
+        setCredDefs(credDefIds);
+
+        // Para cada credDefId, buscar o esquema associado
+        credDefIds.forEach((credDefId) => {
+          axios
+            .get(`${apiUrl}/credential-definitions/${credDefId}`)
+            .then((credDefResponse) => {
+              const schemaId = credDefResponse.data.credential_definition.schemaId;
+
+              // Buscar o esquema associado
+              axios
+                .get(`${apiUrl}/schemas/${schemaId}`)
+                .then((schemaResponse) => {
+                  setSchemas((prevSchemas) => ({
+                    ...prevSchemas,
+                    [credDefId]: schemaResponse.data.schema,
+                  }));
+                })
+                .catch((error) => {
+                  console.error('Erro ao buscar schema:', error);
+                });
+            })
+            .catch((error) => {
+              console.error('Erro ao buscar definição de credencial:', error);
+            });
+        });
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar definições de credenciais:', error);
+      });
   }, [apiUrl]);
+
+  useEffect(() => {
+    if (selectedCredDefId && schemas[selectedCredDefId]) {
+      const attrs = schemas[selectedCredDefId].attrNames;
+      setAttributes(attrs);
+
+      // Inicializar seleção de atributos
+      const initialSelectedAttrs = {};
+      attrs.forEach((attr) => {
+        initialSelectedAttrs[attr] = false;
+      });
+      setSelectedAttributes(initialSelectedAttrs);
+    }
+  }, [selectedCredDefId, schemas]);
+
+  const handleAttributeSelection = (attrName) => {
+    setSelectedAttributes((prevSelected) => ({
+      ...prevSelected,
+      [attrName]: !prevSelected[attrName],
+    }));
+  };
 
   const sendProofRequest = async () => {
     if (!selectedConnectionId) {
@@ -39,58 +89,61 @@ function RequestProof({ apiUrl }) {
       return;
     }
 
-    if (!issuerDID) {
-      alert('Issuer DID não foi carregado.');
+    if (!selectedCredDefId) {
+      alert('Por favor, selecione uma definição de credencial.');
       return;
     }
 
+    const selectedAttrs = Object.keys(selectedAttributes).filter(
+      (attr) => selectedAttributes[attr]
+    );
+
+    if (selectedAttrs.length === 0) {
+      alert('Por favor, selecione ao menos um atributo.');
+      return;
+    }
+
+    // Construir requested_attributes
+    const requestedAttributes = {};
+    selectedAttrs.forEach((attr, index) => {
+      requestedAttributes[`attr${index + 1}_referent`] = {
+        name: attr,
+        restrictions: [
+          {
+            cred_def_id: selectedCredDefId,
+          },
+        ],
+      };
+    });
+
     try {
-      const response = await axios.post(`${apiUrl}/present-proof-2.0/send-request`, {
+      const proofRequest = {
         connection_id: selectedConnectionId,
         presentation_request: {
           indy: {
-            name: 'Proof of Residency',
+            name: 'Solicitação de Prova',
             version: '1.0',
-            requested_attributes: {
-              'attr1_referent': {
-                name: 'name',
-                restrictions: [
-                  {
-                    issuer_did: issuerDID, // Deve ser uma string válida
-                  },
-                ],
-              },
-              'attr2_referent': {
-                name: 'apartment_number',
-                restrictions: [
-                  {
-                    issuer_did: issuerDID, // Deve ser uma string válida
-                  },
-                ],
-              },
-            },
-            requested_predicates: {
-              'predicate1_referent': {
-                name: 'birthdate_dateint',
-                p_type: '>=',
-                p_value: 20030101, // Exemplo de valor de predicado
-                restrictions: [
-                  {
-                    issuer_did: issuerDID, // Deve ser uma string válida
-                  },
-                ],
-              },
-            },
+            requested_attributes: requestedAttributes,
+            requested_predicates: {},
           },
         },
-        comment: 'Solicitando prova de residência e verificação de idade.',
-      });
+        comment: 'Solicitação de prova dinâmica.',
+      };
+
+      const response = await axios.post(
+        `${apiUrl}/present-proof-2.0/send-request`,
+        proofRequest
+      );
 
       alert('Solicitação de prova enviada com sucesso!');
       console.log('Resposta da Solicitação de Prova:', response.data);
     } catch (error) {
       console.error('Erro ao enviar solicitação de prova:', error);
-      alert(`Erro ao enviar solicitação de prova: ${error.response?.data?.detail || error.message}`);
+      alert(
+        `Erro ao enviar solicitação de prova: ${
+          error.response?.data?.detail || error.message
+        }`
+      );
     }
   };
 
@@ -113,9 +166,40 @@ function RequestProof({ apiUrl }) {
           </select>
         </label>
       </div>
-      <button onClick={sendProofRequest} disabled={!selectedConnectionId || !issuerDID}>
-        Enviar Solicitação de Prova
-      </button>
+      <div>
+        <label>
+          Selecionar Definição de Credencial:
+          <select
+            value={selectedCredDefId}
+            onChange={(e) => setSelectedCredDefId(e.target.value)}
+          >
+            <option value="">Selecione uma definição de credencial</option>
+            {credDefs.map((credDefId) => (
+              <option key={credDefId} value={credDefId}>
+                {credDefId}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      {attributes.length > 0 && (
+        <div>
+          <h3>Selecione os Atributos para a Prova:</h3>
+          {attributes.map((attr) => (
+            <div key={attr}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedAttributes[attr]}
+                  onChange={() => handleAttributeSelection(attr)}
+                />
+                {attr}
+              </label>
+            </div>
+          ))}
+        </div>
+      )}
+      <button onClick={sendProofRequest}>Enviar Solicitação de Prova</button>
     </div>
   );
 }
