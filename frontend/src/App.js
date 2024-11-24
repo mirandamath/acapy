@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import DashboardCondominio from './DashboardCondominio';
 import DashboardResidente from './DashboardResidente';
-
+import './App.css'
 function App() {
   const [agentRole, setAgentRole] = useState('');
 

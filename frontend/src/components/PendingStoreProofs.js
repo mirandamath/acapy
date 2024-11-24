@@ -1,7 +1,7 @@
 // src/components/PendingStoreProofs.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingStoreProofs({ apiUrl }) {
   const [pendingStores, setPendingStores] = useState([]);
 
@@ -38,29 +38,33 @@ function PendingStoreProofs({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Provas Verificadas Pendente de Armazenamento</h2>
+    <div className="pending-store-proofs">
+      <h2 className="pending-store-proofs-title">Pending Store Proofs</h2>
       {pendingStores.length > 0 ? (
-        <ul>
+        <ul className="pending-store-proofs-list">
           {pendingStores.map((store) => (
-            <li key={store.presentation_exchange_id}>
-              <p>
+            <li key={store.presentation_exchange_id} className="pending-store-proofs-item">
+              <p className="proof-id">
                 <strong>ID da Apresentação:</strong> {store.presentation_exchange_id}
               </p>
-              <p>
+              <p className="proof-state">
                 <strong>Estado:</strong> {store.state}
               </p>
-              <button onClick={() => storeProof(store.presentation_exchange_id)}>
+              <button
+                className="store-proof-button"
+                onClick={() => storeProof(store.presentation_exchange_id)}
+              >
                 Armazenar Prova
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>Nenhuma prova verificada pendente de armazenamento.</p>
+        <p className="no-pending-store-proofs">Nenhuma prova verificada pendente de armazenamento.</p>
       )}
     </div>
   );
+  
 }
 
 export default PendingStoreProofs;

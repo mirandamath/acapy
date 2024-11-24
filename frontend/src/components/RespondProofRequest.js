@@ -1,7 +1,7 @@
 // src/components/RespondProofRequest.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function RespondProofRequest({ selectedProofRequest, apiUrl }) {
   const [credentials, setCredentials] = useState([]);
   const [selectedCreds, setSelectedCreds] = useState([]);
@@ -85,21 +85,21 @@ function RespondProofRequest({ selectedProofRequest, apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Responder Solicitação de Prova</h2>
-      <p>
+    <div className="respond-proof-request">
+      <h2 className="respond-proof-request-title">Responder Solicitação de Prova</h2>
+      <p className="proof-request-id">
         <strong>ID da Solicitação:</strong> {selectedProofRequest.pres_ex_id}
       </p>
-      <p>
+      <p className="proof-request-name">
         <strong>Nome da Solicitação:</strong>{' '}
         {selectedProofRequest.by_format?.pres_request?.indy?.name || 'N/A'}
       </p>
-      <h3>Selecione as Credenciais para Enviar:</h3>
+      <h3 className="select-credentials-title">Selecione as Credenciais para Enviar:</h3>
       {credentials.length > 0 ? (
-        <ul>
+        <ul className="credentials-list">
           {credentials.map((cred) => (
-            <li key={cred.cred_info.referent}>
-              <label>
+            <li key={cred.cred_info.referent} className="credential-item">
+              <label className="credential-label">
                 <input
                   type="checkbox"
                   checked={selectedCreds.includes(cred.cred_info.referent)}
@@ -107,7 +107,7 @@ function RespondProofRequest({ selectedProofRequest, apiUrl }) {
                 />
                 <strong>Credencial ID:</strong> {cred.cred_info.referent}
                 {Object.entries(cred.cred_info.attrs).map(([key, value]) => (
-                  <p key={key}>
+                  <p key={key} className="credential-attribute">
                     <strong>{key}:</strong> {value}
                   </p>
                 ))}
@@ -116,13 +116,18 @@ function RespondProofRequest({ selectedProofRequest, apiUrl }) {
           ))}
         </ul>
       ) : (
-        <p>Nenhuma credencial correspondente encontrada.</p>
+        <p className="no-matching-credentials">Nenhuma credencial correspondente encontrada.</p>
       )}
-      <button onClick={sendPresentation} disabled={selectedCreds.length === 0}>
+      <button
+        className="send-presentation-button"
+        onClick={sendPresentation}
+        disabled={selectedCreds.length === 0}
+      >
         Enviar Apresentação
       </button>
     </div>
   );
+  
 }
 
 export default RespondProofRequest;

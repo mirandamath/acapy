@@ -1,7 +1,7 @@
 // src/components/CreateSchema.js
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function CreateSchema({ apiUrl }) {
   const [schemaName, setSchemaName] = useState('');
   const [schemaVersion, setSchemaVersion] = useState('');
@@ -37,37 +37,43 @@ function CreateSchema({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Criar Schema e Definição de Credencial</h2>
-      <div>
-        <label>Nome do Schema:</label>
+    <div className="create-schema">
+      <h2 className="create-schema-title">Create Schema and Credential Definition</h2>
+      <div className="schema-input-group">
+        <label className="schema-label">Schema Name:</label>
         <input
+          className="schema-input"
           type="text"
           value={schemaName}
           onChange={(e) => setSchemaName(e.target.value)}
         />
       </div>
-      <div>
-        <label>Versão do Schema:</label>
+      <div className="schema-input-group">
+        <label className="schema-label">Schema Version:</label>
         <input
+          className="schema-input"
           type="text"
           value={schemaVersion}
           onChange={(e) => setSchemaVersion(e.target.value)}
         />
       </div>
-      <div>
-        <label>Atributos (separados por vírgula):</label>
+      <div className="schema-input-group">
+        <label className="schema-label">Attributes (comma-separated):</label>
         <input
+          className="schema-input"
           type="text"
           value={attributes}
           onChange={(e) => setAttributes(e.target.value)}
         />
       </div>
-      <button onClick={createSchemaAndCredDef}>Criar</button>
-      {schemaId && <p>ID do Schema: {schemaId}</p>}
-      {credDefId && <p>ID da Definição de Credencial: {credDefId}</p>}
+      <button className="create-schema-button" onClick={createSchemaAndCredDef}>
+        Create
+      </button>
+      {schemaId && <p className="schema-id">Schema ID: {schemaId}</p>}
+      {credDefId && <p className="credential-def-id">Credential Definition ID: {credDefId}</p>}
     </div>
   );
+  
 }
 
 export default CreateSchema;

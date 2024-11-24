@@ -1,7 +1,7 @@
 // src/components/PendingCredentialOffers.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingCredentialOffers({ apiUrl }) {
   const [pendingOffers, setPendingOffers] = useState([]);
 
@@ -35,31 +35,41 @@ function PendingCredentialOffers({ apiUrl }) {
       });
   };
 
+
   return (
-    <div>
-      <h2>Pending Credential Offers</h2>
+    <div className="pending-credential-offers">
+      <h2 className="pending-credential-offers-title">Pending Credential Offers</h2>
       {pendingOffers.length > 0 ? (
-        <ul>
+        <ul className="pending-credential-offers-list">
           {pendingOffers.map((offer) => (
-            <li key={offer.cred_ex_record.cred_ex_id}>
-              <p>
+            <li
+              key={offer.cred_ex_record.cred_ex_id}
+              className="pending-credential-offers-item"
+            >
+              <p className="credential-id">
                 <strong>Credential Exchange ID:</strong>{' '}
                 {offer.cred_ex_record.cred_ex_id}
               </p>
-              <p>
+              <p className="credential-state">
                 <strong>State:</strong> {offer.cred_ex_record.state}
               </p>
-              <button onClick={() => acceptOffer(offer.cred_ex_record.cred_ex_id)}>
+              <button
+                className="accept-offer-button"
+                onClick={() => acceptOffer(offer.cred_ex_record.cred_ex_id)}
+              >
                 Accept Offer
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No pending credential offers.</p>
+        <p className="no-pending-credential-offers">
+          No pending credential offers.
+        </p>
       )}
     </div>
   );
+  
 }
 
 export default PendingCredentialOffers;

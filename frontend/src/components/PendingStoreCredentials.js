@@ -1,7 +1,7 @@
 // src/components/PendingStoreCredentials.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingStoreCredentials({ apiUrl }) {
   const [pendingStores, setPendingStores] = useState([]);
 
@@ -36,29 +36,33 @@ function PendingStoreCredentials({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Pending Credential Stores</h2>
+    <div className="pending-store-credentials">
+      <h2 className="pending-store-credentials-title">Pending Credential Stores</h2>
       {pendingStores.length > 0 ? (
-        <ul>
+        <ul className="pending-store-credentials-list">
           {pendingStores.map((store) => (
-            <li key={store.cred_ex_record.cred_ex_id}>
-              <p>
+            <li key={store.cred_ex_record.cred_ex_id} className="pending-store-credentials-item">
+              <p className="credential-id">
                 <strong>Credential Exchange ID:</strong> {store.cred_ex_record.cred_ex_id}
               </p>
-              <p>
+              <p className="credential-state">
                 <strong>State:</strong> {store.cred_ex_record.state}
               </p>
-              <button onClick={() => storeCredential(store.cred_ex_record.cred_ex_id)}>
+              <button
+                className="store-credential-button"
+                onClick={() => storeCredential(store.cred_ex_record.cred_ex_id)}
+              >
                 Store Credential
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No pending credential stores.</p>
+        <p className="no-pending-store-credentials">No pending credential stores.</p>
       )}
     </div>
   );
+  
 }
 
 export default PendingStoreCredentials;

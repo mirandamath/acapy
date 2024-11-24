@@ -1,7 +1,7 @@
 // src/components/PendingConnections.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingConnections({ apiUrl }) {
   const [pendingConnections, setPendingConnections] = useState([]);
 

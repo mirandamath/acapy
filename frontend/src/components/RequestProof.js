@@ -1,7 +1,7 @@
 // src/components/RequestProof.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function RequestProof({ apiUrl }) {
   const [connections, setConnections] = useState([]);
   const [credDefs, setCredDefs] = useState([]);
@@ -148,12 +148,13 @@ function RequestProof({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Solicitar Prova</h2>
-      <div>
-        <label>
+    <div className="request-proof">
+      <h2 className="request-proof-title">Solicitar Prova</h2>
+      <div className="select-connection">
+        <label className="connection-label">
           Selecionar Conexão:
           <select
+            className="connection-select"
             value={selectedConnectionId}
             onChange={(e) => setSelectedConnectionId(e.target.value)}
           >
@@ -166,10 +167,11 @@ function RequestProof({ apiUrl }) {
           </select>
         </label>
       </div>
-      <div>
-        <label>
+      <div className="select-cred-def">
+        <label className="cred-def-label">
           Selecionar Definição de Credencial:
           <select
+            className="cred-def-select"
             value={selectedCredDefId}
             onChange={(e) => setSelectedCredDefId(e.target.value)}
           >
@@ -183,10 +185,10 @@ function RequestProof({ apiUrl }) {
         </label>
       </div>
       {attributes.length > 0 && (
-        <div>
-          <h3>Selecione os Atributos para a Prova:</h3>
+        <div className="select-attributes">
+          <h3 className="attributes-title">Selecione os Atributos para a Prova:</h3>
           {attributes.map((attr) => (
-            <div key={attr}>
+            <div key={attr} className="attribute-checkbox">
               <label>
                 <input
                   type="checkbox"
@@ -199,9 +201,12 @@ function RequestProof({ apiUrl }) {
           ))}
         </div>
       )}
-      <button onClick={sendProofRequest}>Enviar Solicitação de Prova</button>
+      <button className="send-proof-request-button" onClick={sendProofRequest}>
+        Enviar Solicitação de Prova
+      </button>
     </div>
   );
+  
 }
 
 export default RequestProof;

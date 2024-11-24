@@ -1,6 +1,7 @@
 // src/components/AcceptInvitation.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import './Components.css';
 
 function AcceptInvitation({ apiUrl }) {
   const [invitationUrl, setInvitationUrl] = useState('');
@@ -41,9 +42,10 @@ function AcceptInvitation({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Accept Connection Invitation</h2>
+    <div className="accept-invitation">
+      <h2 className="accept-invitation-title">Accept Connection Invitation</h2>
       <textarea
+        className="accept-invitation-textarea"
         placeholder="Paste invitation URL here"
         value={invitationUrl}
         onChange={(e) => setInvitationUrl(e.target.value)}
@@ -51,9 +53,15 @@ function AcceptInvitation({ apiUrl }) {
         cols={50}
       />
       <br />
-      <button onClick={acceptInvitation}>Accept Invitation</button>
-      {statusMessage && <p style={{ color: 'green' }}>{statusMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      <button className="accept-invitation-button" onClick={acceptInvitation}>
+        Accept Invitation
+      </button>
+      {statusMessage && (
+        <p className="accept-invitation-success">{statusMessage}</p>
+      )}
+      {errorMessage && (
+        <p className="accept-invitation-error">{errorMessage}</p>
+      )}
     </div>
   );
 }

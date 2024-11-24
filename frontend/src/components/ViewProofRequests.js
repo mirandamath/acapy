@@ -1,7 +1,7 @@
 // src/components/ViewProofRequests.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function ViewProofRequests({ apiUrl, onSelectProofRequest }) {
   const [proofRequests, setProofRequests] = useState([]);
 
@@ -29,33 +29,37 @@ function ViewProofRequests({ apiUrl, onSelectProofRequest }) {
   };
 
   return (
-    <div>
-      <h2>Solicitações de Prova</h2>
+    <div className="view-proof-requests">
+      <h2 className="view-proof-requests-title">Solicitações de Prova</h2>
       {Array.isArray(proofRequests) && proofRequests.length > 0 ? (
-        <ul>
+        <ul className="proof-requests-list">
           {proofRequests.map((request) => (
-            <li key={request.pres_ex_id}>
-              <p>
+            <li key={request.pres_ex_id} className="proof-request-item">
+              <p className="proof-request-id">
                 <strong>ID da Solicitação:</strong> {request.pres_ex_id}
               </p>
-              <p>
+              <p className="proof-request-name">
                 <strong>Nome da Solicitação:</strong>{' '}
                 {request.by_format?.pres_request?.indy?.name || 'N/A'}
               </p>
-              <p>
+              <p className="proof-request-state">
                 <strong>Estado:</strong> {request.state}
               </p>
-              <button onClick={() => onSelectProofRequest(request)}>
+              <button
+                className="respond-proof-request-button"
+                onClick={() => onSelectProofRequest(request)}
+              >
                 Responder Solicitação
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>Nenhuma solicitação de prova pendente.</p>
+        <p className="no-proof-requests">Nenhuma solicitação de prova pendente.</p>
       )}
     </div>
   );
+  
 }
 
 export default ViewProofRequests;

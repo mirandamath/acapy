@@ -1,7 +1,7 @@
 // src/components/PendingCredentialRequests.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingCredentialRequests({ apiUrl }) {
   const [pendingRequests, setPendingRequests] = useState([]);
 
@@ -41,29 +41,38 @@ function PendingCredentialRequests({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Pending Credential Requests</h2>
+    <div className="pending-credential-requests">
+      <h2 className="pending-credential-requests-title">Pending Credential Requests</h2>
       {pendingRequests.length > 0 ? (
-        <ul>
+        <ul className="pending-credential-requests-list">
           {pendingRequests.map((request) => (
-            <li key={request.cred_ex_record.cred_ex_id}>
-              <p>
+            <li
+              key={request.cred_ex_record.cred_ex_id}
+              className="pending-credential-requests-item"
+            >
+              <p className="credential-id">
                 <strong>Credential Exchange ID:</strong> {request.cred_ex_record.cred_ex_id}
               </p>
-              <p>
+              <p className="credential-state">
                 <strong>State:</strong> {request.cred_ex_record.state}
               </p>
-              <button onClick={() => issueCredential(request.cred_ex_record.cred_ex_id)}>
+              <button
+                className="issue-credential-button"
+                onClick={() => issueCredential(request.cred_ex_record.cred_ex_id)}
+              >
                 Issue Credential
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No pending credential requests.</p>
+        <p className="no-pending-credential-requests">
+          No pending credential requests.
+        </p>
       )}
     </div>
   );
+  
 }
 
 export default PendingCredentialRequests;

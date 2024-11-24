@@ -1,7 +1,7 @@
 // src/components/PendingProofRequests.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function PendingProofRequests({ apiUrl }) {
   const [pendingProofRequests, setPendingProofRequests] = useState([]);
 
@@ -66,29 +66,38 @@ function PendingProofRequests({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Pending Proof Requests</h2>
+    <div className="pending-proof-requests">
+      <h2 className="pending-proof-requests-title">Pending Proof Requests</h2>
       {pendingProofRequests.length > 0 ? (
-        <ul>
+        <ul className="pending-proof-requests-list">
           {pendingProofRequests.map((request) => (
-            <li key={request.pres_ex_id}>
-              <p>
+            <li
+              key={request.pres_ex_id}
+              className="pending-proof-requests-item"
+            >
+              <p className="proof-id">
                 <strong>Presentation Exchange ID:</strong> {request.pres_ex_id}
               </p>
-              <p>
+              <p className="proof-state">
                 <strong>State:</strong> {request.state}
               </p>
-              <button onClick={() => acceptProofRequest(request.pres_ex_id)}>
+              <button
+                className="accept-proof-request-button"
+                onClick={() => acceptProofRequest(request.pres_ex_id)}
+              >
                 Accept Proof Request
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No pending proof requests.</p>
+        <p className="no-pending-proof-requests">
+          No pending proof requests.
+        </p>
       )}
     </div>
   );
+  
 }
 
 export default PendingProofRequests;

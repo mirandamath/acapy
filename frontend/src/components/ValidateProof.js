@@ -1,7 +1,7 @@
 // src/components/ValidateProof.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function ValidateProof({ apiUrl }) {
   const [proofs, setProofs] = useState([]);
   const [selectedProofId, setSelectedProofId] = useState('');
@@ -52,43 +52,48 @@ function ValidateProof({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Validar Prova</h2>
+    <div className="validate-proof">
+      <h2 className="validate-proof-title">Validar Prova</h2>
       {error && (
-        <div style={{ color: 'red' }}>
+        <div className="validate-proof-error" style={{ color: 'red' }}>
           <p>{error}</p>
         </div>
       )}
-      <div>
-        <label>
+      <div className="select-proof">
+        <label className="proof-select-label">
           Selecionar Solicitação de Prova:
-          
           <select
+            className="proof-select"
             value={selectedProofId}
             onChange={(e) => setSelectedProofId(e.target.value)}
           >
-            {console.log(selectedProofId)}
             <option value="">Selecione uma solicitação</option>
             {proofs.map((proof) => (
               <option key={proof.pres_ex_id} value={proof.pres_ex_id}>
                 {proof.pres_ex_id} - {proof.name || 'Sem Nome'}
-              </option>    
+              </option>
             ))}
           </select>
         </label>
       </div>
-      <button onClick={validateProof} disabled={!selectedProofId || loading}>
+      <button
+        className="validate-proof-button"
+        onClick={validateProof}
+        disabled={!selectedProofId || loading}
+      >
         {loading ? 'Validando...' : 'Validar Prova'}
       </button>
-
       {validationResult && (
-        <div>
-          <h3>Resultado da Validação:</h3>
-          <pre>{JSON.stringify(validationResult, null, 2)}</pre>
+        <div className="validation-result">
+          <h3 className="validation-result-title">Resultado da Validação:</h3>
+          <pre className="validation-result-details">
+            {JSON.stringify(validationResult, null, 2)}
+          </pre>
         </div>
       )}
     </div>
   );
+  
 }
 
 export default ValidateProof;

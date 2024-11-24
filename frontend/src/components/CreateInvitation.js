@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { QRCodeCanvas } from 'qrcode.react';
+import './Components.css';
 
 function CreateInvitation({ apiUrl }) {
   const [invitationUrl, setInvitationUrl] = useState('');
@@ -22,14 +23,26 @@ function CreateInvitation({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Create Connection Invitation</h2>
-      <button onClick={createInvitation}>Create Invitation</button>
+    <div className="create-invitation">
+      <h2 className="create-invitation-title">Create Connection Invitation</h2>
+      <button
+        className="create-invitation-button"
+        onClick={createInvitation}
+      >
+        Create Invitation
+      </button>
       {invitationUrl && (
-        <div>
-          <p>Invitation URL:</p>
-          <textarea readOnly value={invitationUrl} rows={4} cols={50} />
+        <div className="invitation-details">
+          <p className="invitation-url-label">Invitation URL:</p>
+          <textarea
+            className="invitation-url-textarea"
+            readOnly
+            value={invitationUrl}
+            rows={4}
+            cols={50}
+          />
           <button
+            className="copy-invitation-button"
             onClick={() => {
               navigator.clipboard.writeText(invitationUrl);
               alert('Invitation URL copied to clipboard!');
@@ -37,14 +50,20 @@ function CreateInvitation({ apiUrl }) {
           >
             Copy to Clipboard
           </button>
-          <div style={{ marginTop: '20px' }}>
-            <p>Or scan the QR code:</p>
-            <QRCodeCanvas value={qrCodeValue} size={256} />
+          <div className="qr-code-section" style={{ marginTop: '20px' }}>
+            <p className="qr-code-label">Or scan the QR code:</p>
+            <QRCodeCanvas
+              className="qr-code"
+              value={qrCodeValue}
+              size={256}
+            />
           </div>
         </div>
       )}
     </div>
   );
+  
+  
 }
 
 export default CreateInvitation;

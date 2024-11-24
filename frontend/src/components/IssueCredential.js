@@ -1,7 +1,7 @@
 // src/components/IssueCredential.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import './Components.css';
 function IssueCredential({ apiUrl }) {
   const [connections, setConnections] = useState([]);
   const [credDefs, setCredDefs] = useState([]);
@@ -105,48 +105,47 @@ function IssueCredential({ apiUrl }) {
   };
 
   return (
-    <div>
-      <h2>Emitir Credencial</h2>
-      <div>
-        <label>
-          Selecione a Conexão:
-          <select
-            value={selectedConnectionId}
-            onChange={(e) => setSelectedConnectionId(e.target.value)}
-          >
-            <option value="">Selecione uma conexão</option>
-            {connections.map((conn) => (
-              <option key={conn.connection_id} value={conn.connection_id}>
-                {conn.their_label} ({conn.connection_id}) - Estado: {conn.state}
-              </option>
-            ))}
-          </select>
-        </label>
+    <div className="issue-credential">
+      <h2 className="issue-credential-title">Issue Credential</h2>
+      <div className="input-group">
+        <label className="select-label">Select Connection:</label>
+        <select
+          className="connection-select"
+          value={selectedConnectionId}
+          onChange={(e) => setSelectedConnectionId(e.target.value)}
+        >
+          <option value="">Select a connection</option>
+          {connections.map((conn) => (
+            <option key={conn.connection_id} value={conn.connection_id}>
+              {conn.their_label} ({conn.connection_id}) - State: {conn.state}
+            </option>
+          ))}
+        </select>
       </div>
-      <div>
-        <label>
-          Selecione a Definição de Credencial:
-          <select
-            value={selectedCredDefId}
-            onChange={(e) => setSelectedCredDefId(e.target.value)}
-          >
-            <option value="">Selecione uma definição de credencial</option>
-            {credDefs.map((credDefId) => (
-              <option key={credDefId} value={credDefId}>
-                {credDefId}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="input-group">
+        <label className="select-label">Select Credential Definition:</label>
+        <select
+          className="cred-def-select"
+          value={selectedCredDefId}
+          onChange={(e) => setSelectedCredDefId(e.target.value)}
+        >
+          <option value="">Select a credential definition</option>
+          {credDefs.map((credDefId) => (
+            <option key={credDefId} value={credDefId}>
+              {credDefId}
+            </option>
+          ))}
+        </select>
       </div>
       {schemaAttrs.length > 0 && (
-        <div>
-          <h3>Preencha os Atributos:</h3>
+        <div className="attributes-section">
+          <h3 className="attributes-title">Fill Attributes:</h3>
           {schemaAttrs.map((attr) => (
-            <div key={attr}>
-              <label>
+            <div key={attr} className="attribute-input-group">
+              <label className="attribute-label">
                 {attr}:
                 <input
+                  className="attribute-input"
                   type="text"
                   value={credentialValues[attr]}
                   onChange={(e) => handleAttributeChange(attr, e.target.value)}
@@ -157,13 +156,15 @@ function IssueCredential({ apiUrl }) {
         </div>
       )}
       <button
+        className="issue-credential-button"
         onClick={issueCredential}
         disabled={!selectedConnectionId || !selectedCredDefId || schemaAttrs.length === 0}
       >
-        Emitir Credencial
+        Issue Credential
       </button>
     </div>
   );
+  
 }
 
 export default IssueCredential;

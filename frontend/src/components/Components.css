@@ -1,0 +1,179 @@
+/* Global Styling */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #707070;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+h2 {
+  margin: 20px 0;
+  text-align: center;
+  color: #333;
+}
+
+/* General Component Styling */
+div {
+  max-width: 800px;
+  margin: 20px auto;
+  background: white; /* Default white background */
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Internal Component Backgrounds */
+.connections-list,
+.pending-credential-requests,
+.pending-proof-requests,
+.view-proof-requests,
+.your-credentials,
+.stored-proofs,
+.view-credentials {
+  background: #f0f8ff; /* Light blue background for internal components */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Centering Content */
+.credentials-list,
+.proof-requests-list,
+.stored-proofs-list,
+.attributes-list,
+.revealed-attributes-list,
+.revealed-predicates-list {
+  text-align: center;
+}
+
+.credentials-list li,
+.proof-requests-list li,
+.stored-proofs-list li,
+.attributes-list li,
+.revealed-attributes-list li,
+.revealed-predicates-list li {
+  text-align: left;
+  margin: 10px 0;
+}
+
+/* Titles and Sections */
+.view-proof-requests-title,
+.your-credentials-title,
+.stored-proofs-title,
+.view-credentials-title,
+.pending-proof-requests-title,
+.pending-credential-requests-title {
+  text-align: center;
+  color: #444;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.no-proof-requests,
+.no-credentials,
+.no-stored-proofs,
+.no-pending-proof-requests,
+.no-pending-credential-requests {
+  text-align: center;
+  color: #777;
+  font-size: 1.2em;
+}
+
+/* Individual Item Styling */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: #ffffff; /* White background for individual items */
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin: 10px 0;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+button {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  margin: 10px 0;
+  text-align: center;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Center Buttons */
+.respond-proof-request-button,
+.store-credential-button,
+.send-presentation-button,
+.accept-proof-request-button,
+.issue-credential-button,
+.send-proof-request-button {
+  display: block;
+  margin: 10px auto;
+  text-align: center;
+}
+
+/* Inputs */
+select,
+input[type="text"],
+textarea {
+  width: calc(100% - 40px);
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  display: block;
+}
+
+textarea {
+  resize: none;
+}
+
+/* Specific Component Styles */
+.pending-credential-requests-title,
+.pending-proof-requests-title,
+.view-credentials-title {
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.credential-id,
+.proof-id,
+.credential-state,
+.proof-state {
+  margin-bottom: 10px;
+  font-weight: normal;
+}
+
+.revealed-attributes-title,
+.revealed-predicates-title,
+.attributes-title {
+  margin-top: 15px;
+  font-size: 1.2em;
+}
+
+.revealed-attributes-list,
+.revealed-predicates-list {
+  margin-top: 10px;
+}
