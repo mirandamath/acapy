@@ -1,13 +1,12 @@
 // src/ResidentDashboard.js
 import React, { useState, useEffect } from "react";
 import AcceptInvitation from "./components/AcceptInvitation";
-import PendingConnections from "./components/PendingConnections";
 import ViewProofRequests from "./components/ViewProofRequests";
 import RespondProofRequest from "./components/RespondProofRequest";
-import PendingStoreProofs from "./components/PendingStoreProofs";
+
 import YourCredentials from "./components/YourCredentials";
 import ConnectionsList from "./components/ConnectionsList";
-import PendingCredentialRequests from "./components/PendingCredentialRequests";
+
 import PendingCredentialOffers from "./components/PendingCredentialOffers";
 import PendingStoreCredentials from "./components/PendingStoreCredentials";
 
@@ -32,7 +31,6 @@ function ResidentDashboard({ apiUrl }) {
     <div>
       <h1>Dashboard do Agente Residente</h1>
       <AcceptInvitation apiUrl={apiUrl} />
-      <PendingConnections apiUrl={apiUrl} />
       <ConnectionsList apiUrl={apiUrl} />
       <ViewProofRequests apiUrl={apiUrl} onSelectProofRequest={handleSelectProofRequest} />
       {selectedProofRequest && (

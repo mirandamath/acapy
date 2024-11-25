@@ -177,3 +177,55 @@ textarea {
 .revealed-predicates-list {
   margin-top: 10px;
 }
+
+
+/* Styling for the QR Code reader */
+.qr-reader {
+  margin: 20px auto;
+  text-align: center;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+
+
+}
+
+.qr-reader canvas {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+ #qr-reader__scan_region {
+  width: 90% !important;
+  height:90% !important;
+
+
+}
+
+#qr-reader__dashboard {
+  width: 90% !important;
+  height:90% !important;
+  justify-content: center;
+  align-items: center;
+
+}
+
+
+#qr-reader__dashboard_section{
+  width: 90% !important;
+  height:90% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+#qr-reader__dashboard_section > div {
+  max-width: 800px;
+  margin: 0px 0px;
+  background: white; /* Default white background */
+  border-radius: 0px;
+  padding: 0px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
